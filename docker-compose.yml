@@ -10,6 +10,7 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
 
   backend:
+    restart: always
     depends_on:
       - db
     env_file:
