@@ -1,5 +1,5 @@
 from typing import Optional
-
+from app.models.user import RoleUser
 from pydantic import BaseModel, EmailStr
 
 
@@ -15,6 +15,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     email: EmailStr
     password: str
+    role: Optional[RoleUser]
 
 
 # Properties to receive via API on update
@@ -24,6 +25,7 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     id: Optional[int] = None
+    role: Optional[RoleUser]
 
     class Config:
         orm_mode = True

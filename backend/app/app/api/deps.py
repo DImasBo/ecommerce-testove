@@ -59,3 +59,32 @@ def get_current_active_superuser(
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+
+def get_current_active_by_role(
+    role_name: models.RoleUser,
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
+    if not crud.user.role == role_name:
+        raise HTTPException(
+            status_code=400, detail="The user doesn't have enough privileges"
+        )
+    return current_user
+
+
+def get_current_active_sales_consultant(
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
+    return get_current_active_by_role(models.RoleUser.sales_consultant, current_user)
+
+
+def get_current_active_accountant(
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
+    return get_current_active_by_role(models.RoleUser.accountant, current_user)
+
+
+def get_current_active_cashier(
+    current_user: models.User = Depends(get_current_user),
+) -> models.User:
+    return get_current_active_by_role(models.RoleUser.cashier, current_user)
