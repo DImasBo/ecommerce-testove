@@ -21,6 +21,7 @@ class OrderStatuses(str, Enum):
     created = "CREATED"
     in_progress = "IN PROGRESS"
     ready = "READY"
+    paid = "PAID"
 
 
 class Order(Base):

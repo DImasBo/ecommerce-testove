@@ -5,35 +5,6 @@ from sqlalchemy.orm import Session
 from app import crud, schemas, models
 
 
-TEST_PRODUCT_NAME = "TEST PRODUCT"
-
-
-@pytest.fixture
-def test_product(db: Session) -> models.Product:
-    product = db.query(models.Product).filter(models.Product.name==TEST_PRODUCT_NAME).first()
-    if not product:
-        product = crud.product.create(db, obj_in=schemas.CreateProduct(
-            name=TEST_PRODUCT_NAME,
-            price=100
-        ))
-    return product
-
-
-@pytest.fixture
-def test_order_created(db: Session, test_product) -> models.Product:
-    order = db.query(models.Order).filter(models.Order.product_id == test_product.id).first()
-    if not order:
-        order = crud.product.create(db, obj_in=schemas.CreateOrder(
-            product_id=order.id
-        ))
-    order.status = models.OrderStatuses.created.value
-
-    db.add(order)
-    db.commit()
-    db.refresh(order)
-    return order
-
-
 # Tests CRUD Order
 def test_create_order(db: Session, test_product) -> None:
     order = crud.order.create(db, obj_in=schemas.CreateOrder(
@@ -59,22 +30,16 @@ def test_update_order_to_in_progress_and_ready(db: Session, test_order_created) 
 
     # status to ready
     assert order.status == models.OrderStatuses.ready.value
-    return order
 
 
-def test_create_bill_for_order(db: Session, test_order_created) -> None:
-    order_ready = test_update_order_to_in_progress_and_ready(db, test_order_created)
-
-    # check status to ready
-    assert order_ready.status == models.OrderStatuses.ready.value
-
+def test_create_update_bill_for_order(db: Session, test_order_ready) -> None:
     bill = crud.bill.create(db, obj_in=schemas.CreateBill(
-        order_id=order_ready.id,
+        order_id=test_order_ready.id,
     ))
 
-    assert bill.order_id == order_ready.id
+    assert bill.order_id == test_order_ready.id
     assert bill.status == models.BillStatuses.awaiting.value
-    assert bill.order_created_date == order_ready.created_date
+    assert bill.order_created_date == test_order_ready.created_date
 
     bill = crud.bill.update(db, db_obj=bill, obj_in=schemas.UpdateBill(
         status=models.BillStatuses.paid.value

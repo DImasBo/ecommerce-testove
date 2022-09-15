@@ -54,6 +54,7 @@ class CreateBill(BaseModel):
 
 
 class Bill(BaseModel):
+    id: int
     order: Order
     order_created_date: datetime
     amount: Decimal
@@ -68,3 +69,4 @@ class Bill(BaseModel):
 
 class UpdateBill(BaseModel):
     status: BillStatuses
+    comment: Optional[str]

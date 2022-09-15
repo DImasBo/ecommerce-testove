@@ -47,4 +47,5 @@ class CRUDBill(CRUDBase[Bill, CreateBill, UpdateBill]):
         db.refresh(db_obj)
         return db_obj
 
+
 bill = CRUDBill(models.Bill)
