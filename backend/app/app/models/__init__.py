@@ -1,2 +1,2 @@
 from .user import User, RoleUser
-from .ecommerce import Product, Order, OrderStatuses, Bill, BillStatuses
+from .ecommerce import Product, Order, OrderStatuses, Bill, BillStatuses # noqa

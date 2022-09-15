@@ -12,7 +12,6 @@ from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 from mixer.backend.sqlalchemy import Mixer
 
-
 TEST_SALES_CONSULTANT_USER = "sales-consultant@test.com"
 TEST_CASHIER_USER = "cashier@test.com"
 TEST_PRODUCT_NAME = "TEST PRODUCT"
@@ -65,7 +64,7 @@ def mixer(db: Session):
 
 @pytest.fixture
 def test_product(db: Session) -> models.Product:
-    product = db.query(models.Product).filter(models.Product.name==TEST_PRODUCT_NAME).first()
+    product = db.query(models.Product).filter(models.Product.name == TEST_PRODUCT_NAME).first()
     if not product:
         product = crud.product.create(db, obj_in=schemas.CreateProduct(
             name=TEST_PRODUCT_NAME,

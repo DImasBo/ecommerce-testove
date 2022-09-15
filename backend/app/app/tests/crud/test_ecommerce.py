@@ -1,5 +1,3 @@
-import pytest
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from app import crud, schemas, models
@@ -46,4 +44,3 @@ def test_create_update_bill_for_order(db: Session, test_order_ready) -> None:
     ))
 
     assert bill.status == models.BillStatuses.paid.value
-
