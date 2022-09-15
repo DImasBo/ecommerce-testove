@@ -1,0 +1,4 @@
+
+
+class DiscountManager:
+    pass

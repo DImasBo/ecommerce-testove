@@ -1,8 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
 from app.models.ecommerce import OrderStatuses
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+
+class Discount(BaseModel):
+    """
+    discount is dynamic domain for Product
+    """
+    discount: int =
 
 # code for Product
 class ProductBase(BaseModel):
@@ -17,6 +23,7 @@ class CreateProduct(ProductBase):
 class Product(ProductBase):
     id: int
     created_date: datetime
+    discount:
 
     class Config:
         orm_mode = True

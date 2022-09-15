@@ -33,6 +33,12 @@ class Order(Base):
     )
 
 
+class BillStatuses(str, Enum):
+    awaiting = "awaiting"
+    paid = "paid"
+    declined = "declined"
+
+
 class Bill(Base):
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String, nullable=False)
@@ -41,3 +47,4 @@ class Bill(Base):
     created_date = Column(
         DateTime, default=datetime.now, server_default=func.now()
     )
+    status = Column(String, default=BillStatuses.awaiting.value)
