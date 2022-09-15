@@ -19,7 +19,7 @@ TEST_SALES_CONSULTANT_USER = "sales-consultant@test.com"
 @pytest.fixture(scope="session")
 def db() -> Generator:
     session: Session = SessionLocal()
-    yield db
+    yield session
     session.rollback()
     session.close()
 
