@@ -1,6 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
-from app.models.ecommerce import OrderStatuses
+from typing import Optional
+
+from app.models.ecommerce import OrderStatuses, BillStatuses
 from pydantic import BaseModel
 
 
@@ -39,3 +41,32 @@ class CreateOrder(BaseModel):
 
 class UpdateOrder(BaseModel):
     status: OrderStatuses
+
+
+class CreateBill(BaseModel):
+    order_id: int
+
+    product_name: Optional[str]
+    product_price: Optional[Decimal]
+
+    amount: Optional[Decimal]
+    comment: Optional[str]
+
+
+class Bill(BaseModel):
+    id: int
+    order: Order
+    order_created_date: datetime
+    amount: Decimal
+    status: BillStatuses
+    product_name: Optional[str]
+    product_price: Optional[Decimal]
+    created_date: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class UpdateBill(BaseModel):
+    status: BillStatuses
+    comment: Optional[str]
