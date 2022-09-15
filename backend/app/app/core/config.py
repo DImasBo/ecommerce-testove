@@ -5,6 +5,7 @@ from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn, v
 
 
 class Settings(BaseSettings):
+    DEBUG: str = True
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -57,10 +58,12 @@ class Settings(BaseSettings):
             and values.get("SMTP_PORT")
             and values.get("EMAILS_FROM_EMAIL")
         )
-
+    # EMAIL USER FOR fixture in tests
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
+    # Dev fields for creating models for dev
     FIRST_SUPERUSER: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
+    # FF is open create User from API
     USERS_OPEN_REGISTRATION: bool = False
 
     class Config:

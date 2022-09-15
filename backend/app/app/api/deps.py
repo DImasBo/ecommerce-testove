@@ -63,9 +63,9 @@ def get_current_active_superuser(
 
 def get_current_active_by_role(
     role_name: models.RoleUser,
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_current_active_superuser),
 ) -> models.User:
-    if not crud.user.role == role_name:
+    if not current_user.role == role_name:
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
         )
