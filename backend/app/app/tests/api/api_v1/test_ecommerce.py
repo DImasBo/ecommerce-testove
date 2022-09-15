@@ -10,7 +10,7 @@ def test_pick_up_order(db: Session, client: TestClient, sales_consultant_user_to
     order = test_order_created
     r = client.put(f"{settings.API_V1_STR}/ecommerce/order/pick_up",
                    headers=sales_consultant_user_token_headers,
-                   params={"order_id": order.id})
+                   json={"order_id": order.id})
     data = r.json()
 
     assert r.status_code == 200
@@ -26,7 +26,7 @@ def test_set_order_to_ready(db: Session, client: TestClient, sales_consultant_us
     order = test_order_created
     r = client.put(f"{settings.API_V1_STR}/ecommerce/order/set/ready",
                    headers=sales_consultant_user_token_headers,
-                   params={"order_id": order.id})
+                   json={"order_id": order.id})
     data = r.json()
 
     assert r.status_code == 200
@@ -58,14 +58,13 @@ def test_pay_bill(client: TestClient, test_order_ready, cashier_user_token_heade
                     json={"order_id": test_order_ready.id})
 
     data = r.json()
-
     assert data['status'] == models.BillStatuses.awaiting.value
 
-    r = client.post(f"{settings.API_V1_STR}/ecommerce/bill/pay",
-                    headers=cashier_user_token_headers,
-                    json={"bill_id": data['id']})
-    data = r.json()
+    r = client.put(f"{settings.API_V1_STR}/ecommerce/bill/pay",
+                   headers=cashier_user_token_headers,
+                   json={"bill_id": data['id']})
 
+    data = r.json()
     assert r.status_code == 200
     assert data['order']['status'] == models.OrderStatuses.paid.value
     assert data['status'] == models.BillStatuses.paid.value

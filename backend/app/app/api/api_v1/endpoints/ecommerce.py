@@ -72,7 +72,7 @@ def read_orders(
 
 @router.put("/order/pick_up", response_model=schemas.Order)
 def pick_up_order(
-    order_id: int,
+    order_id: int = Body(..., embed=True),
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_sales_consultant),
 ) -> Any:
@@ -99,7 +99,7 @@ def pick_up_order(
 
 @router.put("/order/set/ready", response_model=schemas.Order)
 def set_order_to_ready(
-    order_id: int,
+    order_id: int = Body(..., embed=True),
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_sales_consultant),
 ) -> Any:
@@ -179,7 +179,7 @@ def read_bills(
     return bills
 
 
-@router.post("/bill/pay", response_model=schemas.Bill)
+@router.put("/bill/pay", response_model=schemas.Bill)
 def pay_bill(
     bill_id: int = Body(...),
     comment: Optional[str] = Body(None),
