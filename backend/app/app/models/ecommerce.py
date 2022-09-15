@@ -20,7 +20,7 @@ class Product(Base):
 class OrderStatuses(str, Enum):
     created = "CREATED"
     in_progress = "IN PROGRESS"
-    done = "DONE"
+    ready = "READY"
 
 
 class Order(Base):
