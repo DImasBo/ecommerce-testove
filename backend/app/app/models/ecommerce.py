@@ -16,6 +16,21 @@ class Product(Base):
     )
     orders = relationship("Order", back_populates="product")
 
+    _discounts: list = []
+
+    @property
+    def discounts(self):
+        return [
+            {
+                "discount": 20,
+                "name": "test",
+                "discount_price": 20
+            }
+        ]
+
+    def add_discount(self, discount):
+        self._discounts.append(discount)
+
 
 class OrderStatuses(str, Enum):
     created = "CREATED"
