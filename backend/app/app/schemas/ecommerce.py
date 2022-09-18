@@ -20,7 +20,7 @@ class CreateProduct(ProductBase):
 class Discount(BaseModel):
     name: str
     discount: int = Field(1, gt=1, lt=100)
-    discount_price: Decimal
+    discount_price: Optional[Decimal]
 
 
 class Product(ProductBase):

@@ -1,2 +1,2 @@
 from .discount_manager import DiscountManager
-from .discounts import DiscountProductMoreOneMonth
+from .discounts import DiscountProductMoreOneMonth, calculate_discount_price

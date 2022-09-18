@@ -18,21 +18,21 @@ class DiscountManager(metaclass=Singleton):
     """
     Manager Check for Any Discount on Products
     """
-    list_discount = [DiscountProductMoreOneMonth, ]
+    list_discount = (DiscountProductMoreOneMonth, )
 
-    def check_product(self, product: models.Product):
-        for class_checker_discount in self.list_discount:
-            checker_discount = class_checker_discount()
-            if checker_discount.check(product):
-                discount = checker_discount.get_discount_with_new_price(
-                    product_price=product.price
-                )
+    @classmethod
+    def check_product(cls, product: models.Product):
+        for class_checker_discount in cls.list_discount:
+            checker_discount = class_checker_discount(product)
+            if checker_discount.check():
+                discount = checker_discount.create_discount()
                 product.add_discount(discount)
 
         return product
 
-    def check_products(self, products: List[models.Product]) -> List[models.Product]:
+    @classmethod
+    def check_products(cls, products: List[models.Product]) -> List[models.Product]:
         for product in products:
-            self.check_product(product)
+            cls.check_product(product)
         print(products)
         return products

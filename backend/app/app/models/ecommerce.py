@@ -16,19 +16,15 @@ class Product(Base):
     )
     orders = relationship("Order", back_populates="product")
 
-    _discounts: list = []
+    _discounts: list = None
 
     @property
     def discounts(self):
-        return [
-            {
-                "discount": 20,
-                "name": "test",
-                "discount_price": 20
-            }
-        ]
+        return self._discounts
 
     def add_discount(self, discount):
+        if not self._discounts:
+            self._discounts = []
         self._discounts.append(discount)
 
 

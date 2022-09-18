@@ -7,8 +7,8 @@ from pydantic import BaseModel, Field
 from app import models
 
 
-def calculate_discount_price(discount, price):
-    return price * (discount / 100)
+def calculate_discount_price(discount, price) -> float:
+    return price - price * (discount / Decimal(100))
 
 
 class DiscountCheckerBase:
@@ -17,11 +17,13 @@ class DiscountCheckerBase:
     """
     discount: Discount
 
-    @staticmethod
-    def check(product: models.Product):
+    def __init__(self, product: models.Product):
+        self.product = product
+
+    def check(self):
         pass
 
-    def get_schema(self, product_price):
+    def create_discount(self):
         pass
 
 
@@ -33,13 +35,15 @@ class DiscountProductMoreOneMonth(DiscountCheckerBase):
         discount=20,
         name="More than one per Month"
     )
+    # describe default data for discount
 
-    def check(self, product: models.Product):
-        _, count_day = monthrange(self.created_date.year, self.created_date.month)
-        if datetime.now() - self.created_date > timedelta(days=count_day):
+    def check(self) -> bool:
+        _, count_day = monthrange(self.product.created_date.year, self.product.created_date.month)
+        if datetime.now() - self.product.created_date > timedelta(days=count_day):
             return True
+        return False
 
-    def get_discount_with_new_price(self, product_price):
-        discount_price = calculate_discount_price(product_price)
+    def create_discount(self):
+        discount_price = calculate_discount_price(self.discount.discount, self.product.price)
         self.discount.discount_price = discount_price
         return self.discount
