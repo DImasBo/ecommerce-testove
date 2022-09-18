@@ -36,6 +36,7 @@ class OrderStatuses(str, Enum):
     created = "CREATED"
     in_progress = "IN PROGRESS"
     ready = "READY"
+    paid = "PAID"
 
 
 class Order(Base):
@@ -46,19 +47,29 @@ class Order(Base):
     created_date = Column(
         DateTime, default=datetime.now, server_default=func.now()
     )
+    bill = relationship("Bill", uselist=False, back_populates="order")
 
 
 class BillStatuses(str, Enum):
-    awaiting = "awaiting"
-    paid = "paid"
-    declined = "declined"
+    awaiting = "AWAITING"
+    paid = "PAID"
+    declined = "DECLINED"
 
 
 class Bill(Base):
     id = Column(Integer, primary_key=True, index=True)
-    product_name = Column(String, nullable=False)
-    product_price = Column(Numeric, nullable=False)
-    created_order_date = Column(DateTime)
+    order_id = Column(Integer, ForeignKey('order.id'))
+    order = relationship("Order", back_populates="bill")
+    order_created_date = Column(DateTime)
+
+    amount = Column(Numeric, nullable=False)
+
+    status = Column(String, default=BillStatuses.awaiting.value)
+    comment = Column(String)
+
+    product_name = Column(String)
+    product_price = Column(Numeric)
+
     created_date = Column(
         DateTime, default=datetime.now, server_default=func.now()
     )
