@@ -173,13 +173,15 @@ docker-compose logs backend
 ```
 
 
-#### Local tests
+### Local tests
 
 Start the stack with this command:
 
 ```Bash
-DOMAIN=backend sh ./scripts/test-local.sh
+DOMAIN=backend sh ./test-local.sh
 ```
+![image](https://user-images.githubusercontent.com/52758126/191039228-d3d26fb0-c399-47c0-a6dc-d999f0f2116e.png)
+
 ### Migrations
 
 As during local development your app directory is mounted as a volume inside the container, you can also run the migrations with `alembic` commands inside the container and the migration code will be in your app directory (instead of being only inside the container). So you can add it to your git repository.
