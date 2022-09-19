@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, Body, HTTPException
 from sqlalchemy.orm import Session
 from app import models, schemas, crud
 from app.api import deps
+from app.service.discount import DiscountManager
+
 
 router = APIRouter()
 
@@ -21,6 +23,8 @@ def read_products(
     Available login for users: Super User.
     """
     products = crud.product.get_multi(db, skip=skip, limit=limit)
+    # check products with Discount
+    DiscountManager.check_products(products)
 
     return products
 
@@ -37,6 +41,9 @@ def create_product(
     Available login for users: Super User.
     """
     product = crud.product.create(db, obj_in=product_in)
+    # check product with Discount
+    DiscountManager.check_product(product)
+
     return product
 
 
@@ -53,6 +60,9 @@ def create_order(
     Available login for users: Cashier.
     """
     order = crud.order.create(db, obj_in=order_in)
+
+    DiscountManager.check_product(order.product)
+
     return order
 
 
@@ -68,6 +78,10 @@ def read_orders(
     Available login for users: Sales Consultant.
     """
     orders = crud.order.get_multi(db, skip=skip, limit=limit)
+
+    for order in orders:
+        DiscountManager.check_product(order.product)
+
     return orders
 
 
@@ -88,6 +102,13 @@ def pick_up_order(
             status_code=404,
             detail="order not found",
         )
+
+    if not order.status == models.OrderStatuses.created.value:
+        raise HTTPException(
+            status_code=422,
+            detail=f"order {order.id} have other status {order.status}",
+        )
+
     order = crud.order.update(
         db,
         db_obj=order,
@@ -95,6 +116,9 @@ def pick_up_order(
             status=models.OrderStatuses.in_progress.value
         )
     )
+
+    DiscountManager.check_product(order.product)
+
     return order
 
 
@@ -115,6 +139,13 @@ def set_order_to_ready(
             status_code=404,
             detail="order not found",
         )
+
+    if not order.status == models.OrderStatuses.created.value:
+        raise HTTPException(
+            status_code=422,
+            detail=f"order {order.id} have other status {order.status}",
+        )
+
     order = crud.order.update(
         db,
         db_obj=order,
@@ -122,6 +153,9 @@ def set_order_to_ready(
             status=models.OrderStatuses.ready.value
         )
     )
+
+    DiscountManager.check_product(order.product)
+
     return order
 
 
@@ -166,6 +200,9 @@ def create_bill_for_order(
         bill_in.amount = order.product.price
 
     bill = crud.bill.create(db, obj_in=bill_in)
+
+    DiscountManager.check_product(bill.order.product)
+
     return bill
 
 
@@ -177,6 +214,10 @@ def read_bills(
     current_user: models.User = Depends(deps.get_current_active_cashier),
 ) -> Any:
     bills = crud.bill.get_multi(db, skip=skip, limit=limit)
+
+    for bill in bills:
+        DiscountManager.check_product(bill.order.product)
+
     return bills
 
 
@@ -215,5 +256,7 @@ def pay_bill(
     order = crud.order.update(db, db_obj=bill.order, obj_in=schemas.UpdateOrder(
         status=models.OrderStatuses.paid.value
     ))
+
+    DiscountManager.check_product(bill.order.product)
 
     return bill

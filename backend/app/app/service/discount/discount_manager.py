@@ -34,5 +34,4 @@ class DiscountManager(metaclass=Singleton):
     def check_products(cls, products: List[models.Product]) -> List[models.Product]:
         for product in products:
             cls.check_product(product)
-        print(products)
         return products
