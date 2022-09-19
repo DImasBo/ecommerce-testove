@@ -16,6 +16,17 @@ class Product(Base):
     )
     orders = relationship("Order", back_populates="product")
 
+    _discounts: list = None
+
+    @property
+    def discounts(self):
+        return self._discounts
+
+    def add_discount(self, discount):
+        if not self._discounts:
+            self._discounts = []
+        self._discounts.append(discount)
+
 
 class OrderStatuses(str, Enum):
     created = "CREATED"
@@ -58,3 +69,4 @@ class Bill(Base):
     created_date = Column(
         DateTime, default=datetime.now, server_default=func.now()
     )
+    status = Column(String, default=BillStatuses.awaiting.value)

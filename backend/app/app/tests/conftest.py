@@ -59,7 +59,7 @@ def cashier_user_token_headers(client: TestClient, db: Session) -> Dict[str, str
 
 @pytest.fixture(scope="module")
 def mixer(db: Session):
-    return Mixer(session=db, commit=True)
+    return Mixer(session=db, commit=False)
 
 
 @pytest.fixture

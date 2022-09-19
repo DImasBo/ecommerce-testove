@@ -1,9 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+
+from typing import Optional, List
 
 from app.models.ecommerce import OrderStatuses, BillStatuses
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 
 
 # code for Product
@@ -16,9 +17,22 @@ class CreateProduct(ProductBase):
     pass
 
 
+class Discount(BaseModel):
+    name: str
+    discount: int = Field(1, gt=1, lt=100)
+    discount_price: Optional[Decimal]
+
+
 class Product(ProductBase):
     id: int
     created_date: datetime
+    discounts: Optional[List[Discount]] = None
+
+    @validator("discounts")
+    def format_discounts(cls, value):
+        if not value:
+            return None
+        return value
 
     class Config:
         orm_mode = True
