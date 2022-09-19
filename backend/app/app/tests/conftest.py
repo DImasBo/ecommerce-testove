@@ -78,7 +78,7 @@ def test_order_created(db: Session, test_product) -> models.Product:
     order = db.query(models.Order).filter(models.Order.product_id == test_product.id).first()
     if not order:
         order = crud.product.create(db, obj_in=schemas.CreateOrder(
-            product_id=order.id
+            product_id=test_product.id
         ))
     if order.bill:
         crud.bill.remove(db, id=order.bill.id)
